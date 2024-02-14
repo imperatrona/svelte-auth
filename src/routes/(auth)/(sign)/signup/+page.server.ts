@@ -1,6 +1,7 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { generateEmailVerificationCode, lucia } from "$lib/server/auth";
 import { generateId } from "lucia";
+import { Argon2id } from "oslo/password";
 import type { PageServerLoad, Actions } from "./$types";
 import { sendEmailVerificationEmail } from "$lib/server/mail";
 import { db } from "$lib/server/db";
@@ -21,7 +22,7 @@ export const actions: Actions = {
       return fail(400);
     }
 
-    const hashedPassword = await Bun.password.hash(password);
+    const hashedPassword = await new Argon2id().hash(password);
     const userId = generateId(15);
 
     try {
